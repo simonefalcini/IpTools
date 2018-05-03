@@ -198,6 +198,7 @@ class IpTools {
         else {
             
         	$dd = new DeviceDetector($ua);
+        	
 
 			// OPTIONAL: Set caching method
 			// By default static cache is used, which works best within one php process (memory array caching)
