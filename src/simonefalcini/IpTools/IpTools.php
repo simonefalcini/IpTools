@@ -4,6 +4,7 @@ namespace simonefalcini\IpTools;
 
 use \DeviceDetector\DeviceDetector;
 use \DeviceDetector\Parser\Device\DeviceParserAbstract;
+use \Detection\MobileDetect;
 
 class IpTools {
 
@@ -198,7 +199,7 @@ class IpTools {
         else {
             
         	$dd = new DeviceDetector($ua);
-        	
+
 
 			// OPTIONAL: Set caching method
 			// By default static cache is used, which works best within one php process (memory array caching)
