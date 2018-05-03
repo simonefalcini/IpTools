@@ -137,7 +137,7 @@ class IpTools {
 	    }
 	    $record = $reader->asn($ip);
 		
-	    $id = 'A'.$record->autonomousSystemNumber;
+	    $id = 'AS'.$record->autonomousSystemNumber;
 	    $name = $record->autonomousSystemOrganization;
 	    
 	    return ['id'=>$id,'name'=>$name];
