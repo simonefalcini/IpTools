@@ -109,7 +109,7 @@ class IpTools {
 	    	Yii::error("Cannot find /usr/local/share/GeoIP/GeoLite2-City.mmdb please fix!");
 	    	return null;
 	    }
-	    $record = $reader->country($ip);
+	    $record = $reader->city($ip);
 
 		return [
 			'country_code' 	=> $record->country->isoCode,
