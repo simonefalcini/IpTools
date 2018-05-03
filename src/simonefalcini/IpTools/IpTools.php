@@ -135,7 +135,13 @@ class IpTools {
 	    	Yii::error("Cannot find /usr/local/share/GeoIP/GeoLite2-ASN.mmdb please fix!");
 	    	return null;
 	    }
-	    $record = $reader->asn($ip);
+	    try {
+	    	$record = $reader->asn($ip);	
+	    }
+	    catch(\GeoIp2\Exception\GeoIp2Exception $e) {
+	    	Yii::error("ip $ip not found");
+	    	return ['id'=>'','name'=>''];	
+	    }
 		
 	    $id = 'AS'.$record->autonomousSystemNumber;
 	    $name = $record->autonomousSystemOrganization;
