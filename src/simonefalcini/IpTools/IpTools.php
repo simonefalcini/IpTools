@@ -69,7 +69,13 @@ class IpTools {
 	    	Yii::error("Cannot find /usr/local/share/GeoIP/GeoLite2-Country.mmdb please fix!");
 	    	return null;
 	    }
-	    $record = $reader->country($ip);
+	    try {
+	    	$record = $reader->country($ip);
+	    }
+	    catch(\GeoIp2\Exception\GeoIp2Exception $e) {
+	    	\Yii::error("GEOIP GEO ERROR: ip $ip not found");
+	    	return '';
+	    }
 		$geoip = strtolower($record->country->isoCode);
 
 		if ($geoip == 'sm')
@@ -91,7 +97,13 @@ class IpTools {
 	    	Yii::error("Cannot find /usr/local/share/GeoIP/GeoLite2-Country.mmdb please fix!");
 	    	return null;
 	    }
-	    $record = $reader->country($ip);
+	    try {
+	    	$record = $reader->country($ip);
+	    }
+	    catch(\GeoIp2\Exception\GeoIp2Exception $e) {
+	    	\Yii::error("GEOIP NAME ERROR: ip $ip not found");
+	    	return '';
+	    }
 		$geoip = strtolower($record->country->name);
 
 		return $geoip;
@@ -109,7 +121,13 @@ class IpTools {
 	    	Yii::error("Cannot find /usr/local/share/GeoIP/GeoLite2-City.mmdb please fix!");
 	    	return null;
 	    }
-	    $record = $reader->city($ip);
+	    try {
+	    	$record = $reader->city($ip);
+	    }
+	    catch(\GeoIp2\Exception\GeoIp2Exception $e) {
+	    	\Yii::error("GEOIP CITY ERROR: ip $ip not found");
+	    	return '';
+	    }
 
 		return [
 			'country_code' 	=> $record->country->isoCode,
@@ -139,7 +157,7 @@ class IpTools {
 	    	$record = $reader->asn($ip);	
 	    }
 	    catch(\GeoIp2\Exception\GeoIp2Exception $e) {
-	    	\Yii::error("GEOIP ERROR: ip $ip not found");
+	    	\Yii::error("GEOIP ASN ERROR: ip $ip not found");
 	    	return ['id'=>'','name'=>''];	
 	    }
 		
