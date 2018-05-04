@@ -139,7 +139,7 @@ class IpTools {
 	    	$record = $reader->asn($ip);	
 	    }
 	    catch(\GeoIp2\Exception\GeoIp2Exception $e) {
-	    	Yii::error("ip $ip not found");
+	    	\Yii::error("GEOIP ERROR: ip $ip not found");
 	    	return ['id'=>'','name'=>''];	
 	    }
 		
