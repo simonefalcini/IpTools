@@ -1,16 +1,21 @@
 {
     "name": "simonefalcini/iptools",
+    "keywords": [
+        "iptools",
+        "geoip2"        
+    ],    
+    "license": "WTFPL",
     "autoload": {
         "psr-0" : {
             "simonefalcini\\IpTools" : "src"
         }
     },
     "require": {
-        "php": ">=5.3.0"
+        "php": ">=5.3.0",
+        "geoip2/geoip2": "^2"
     },
     "require-dev": {
         "jaybizzle/crawler-detect": "1.*",
-        "mobiledetect/mobiledetectlib": "^2.8",
-        "geoip2/geoip2": "^2"
+        "mobiledetect/mobiledetectlib": "^2.8"        
     }
 }
