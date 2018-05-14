@@ -101,7 +101,7 @@ class IpTools {
 	    	$record = $reader->country($ip);
 	    }
 	    catch(\Exception $e) {
-	    	\Yii::error("GEOIP NAME ERROR: ip $ip not found");
+	    	//\Yii::error("GEOIP NAME ERROR: ip $ip not found");
 	    	return '';
 	    }
 		$geoip = strtolower($record->country->name);
@@ -125,7 +125,7 @@ class IpTools {
 	    	$record = $reader->city($ip);
 	    }
 	    catch(\Exception $e) {
-	    	\Yii::error("GEOIP CITY ERROR: ip $ip not found");
+	    	//\Yii::error("GEOIP CITY ERROR: ip $ip not found");
 	    	return '';
 	    }
 
@@ -157,7 +157,7 @@ class IpTools {
 	    	$record = $reader->asn($ip);	
 	    }
 	    catch(\Exception $e) {
-	    	\Yii::error("GEOIP ASN ERROR: ip $ip not found");
+	    	//\Yii::error("GEOIP ASN ERROR: ip $ip not found");
 	    	return ['id'=>'','name'=>''];	
 	    }
 		
