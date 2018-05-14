@@ -73,7 +73,7 @@ class IpTools {
 	    	$record = $reader->country($ip);
 	    }
 	    catch(\Exception $e) {
-	    	\Yii::error("GEOIP GEO ERROR: ip $ip not found");
+	    	//\Yii::error("GEOIP GEO ERROR: ip $ip not found");
 	    	return '';
 	    }
 		$geoip = strtolower($record->country->isoCode);
