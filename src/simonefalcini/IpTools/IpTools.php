@@ -138,6 +138,7 @@ class IpTools {
 			'zip'			=> $record->postal->code,
 			'lat'			=> $record->location->latitude,
 			'lon'			=> $record->location->longitude,
+			'precision'		=> $record->location->accuracyRadius,
 		];
 	}	
 
