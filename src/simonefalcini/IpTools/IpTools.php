@@ -29,6 +29,7 @@ class IpTools {
 		'AS62638', 			// Query Foundry, LLC
 		'AS61440',			// Digital Energy Technologies Chile SpA
 		'AS8075',			// Bing
+		'AS15169','AS19527','AS36040','AS36492','AS395973','AS43515','AS36384'			// GOOGLE
 		]; //,'AS53667','AS6921','AS62638']; // Vodafone 'AS30722'
 	
 	public static function getIp() {
