@@ -16,6 +16,6 @@
     },
     "require-dev": {
         "jaybizzle/crawler-detect": "1.*",
-        "mobiledetect/mobiledetectlib": "^2.8"        
+        "mobiledetect/mobiledetectlib": "^2.8"
     }
 }

@@ -2,6 +2,7 @@
 
 namespace simonefalcini\IpTools;
 
+use Yii;
 use \DeviceDetector\DeviceDetector;
 use \DeviceDetector\Parser\Device\DeviceParserAbstract;
 use \Detection\MobileDetect;
@@ -63,11 +64,12 @@ class IpTools {
 		if (!isset($ip)) {
 			$ip = self::getIp();
 		}
-	    if (file_exists("/usr/local/share/GeoIP/GeoLite2-Country.mmdb")) {
-	    	$reader = new \GeoIp2\Database\Reader('/usr/local/share/GeoIP/GeoLite2-Country.mmdb');
+		$db = self::getDbName('country');
+	    if (!empty($db)) {
+	    	$reader = new \GeoIp2\Database\Reader($db);
 		}
 	    else {
-	    	Yii::error("Cannot find /usr/local/share/GeoIP/GeoLite2-Country.mmdb please fix!");
+	    	Yii::error("Cannot find country db please fix!");
 	    	return null;
 	    }
 	    try {
@@ -91,11 +93,12 @@ class IpTools {
 			$ip = self::getIp();
 		}
 	    
-		if (file_exists("/usr/local/share/GeoIP/GeoLite2-Country.mmdb")) {
-	    	$reader = new \GeoIp2\Database\Reader('/usr/local/share/GeoIP/GeoLite2-Country.mmdb');
+	    $db = self::getDbName('country');
+		if (!empty($db)) {
+	    	$reader = new \GeoIp2\Database\Reader($db);
 		}
 	    else {
-	    	Yii::error("Cannot find /usr/local/share/GeoIP/GeoLite2-Country.mmdb please fix!");
+	    	Yii::error("Cannot find country please fix!");
 	    	return null;
 	    }
 	    try {
@@ -115,11 +118,12 @@ class IpTools {
 			$ip = self::getIp();
 		}
 	    
-	    if (file_exists("/usr/local/share/GeoIP/GeoLite2-City.mmdb")) {
-	    	$reader = new \GeoIp2\Database\Reader('/usr/local/share/GeoIP/GeoLite2-City.mmdb');
+	    $db = self::getDbName('city');
+	    if (!empty($db)) {
+	    	$reader = new \GeoIp2\Database\Reader($db);
 		}
 	    else {
-	    	Yii::error("Cannot find /usr/local/share/GeoIP/GeoLite2-City.mmdb please fix!");
+	    	Yii::error("Cannot find city db please fix!");
 	    	return null;
 	    }
 	    try {
@@ -148,26 +152,34 @@ class IpTools {
 			$ip = self::getIp();
 		}
 
-		if (file_exists("/usr/local/share/GeoIP/GeoLite2-ASN.mmdb")) {
-	    	$reader = new \GeoIp2\Database\Reader('/usr/local/share/GeoIP/GeoLite2-ASN.mmdb');
-		}
-	    else {
-	    	Yii::error("Cannot find /usr/local/share/GeoIP/GeoLite2-ASN.mmdb please fix!");
-	    	return null;
-	    }
-	    try {
-	    	$record = $reader->asn($ip);	
+		try {
+			$db = self::getDbName('isp');
+			if (empty($db)) {
+				$db = self::getDbName('asn');
+				if (empty($db)) {
+					Yii::error("Cannot find asn db please fix!");
+		    		return null;
+				}
+				$reader = new \GeoIp2\Database\Reader($db);
+				$record = $reader->asn($ip);
+			}
+			else {
+				$reader = new \GeoIp2\Database\Reader($db);
+				$record = $reader->isp($ip);
+			}			
 	    }
 	    catch(\Exception $e) {
 	    	//\Yii::error("GEOIP ASN ERROR: ip $ip not found");
 	    	return ['id'=>'','name'=>''];	
 	    }
+	    
 		
 	    $id = 'AS'.$record->autonomousSystemNumber;
 	    $name = $record->autonomousSystemOrganization;
 	    
 	    return ['id'=>$id,'name'=>$name];
 	}
+
 
 	public static function isBot($ip=null) {		
 		$asn = self::getAsn($ip);	    	   
@@ -285,6 +297,30 @@ class IpTools {
 	        }
 	    }
 	    return $aryRange;
+	}
+
+	private static function getDbName($db) {
+		switch(strtolower($db)) {
+			case 'country':
+				if (file_exists("/usr/local/share/GeoIP/GeoIP2-Country.mmdb"))
+					return "/usr/local/share/GeoIP/GeoIP2-Country.mmdb";
+				elseif (file_exists("/usr/local/share/GeoIP/GeoLite2-Country.mmdb"))
+					return "/usr/local/share/GeoIP/GeoLite2-Country.mmdb";	
+			break;			
+			case 'city':
+				if (file_exists("/usr/local/share/GeoIP/GeoLite2-City.mmdb"))
+					return "/usr/local/share/GeoIP/GeoLite2-City.mmdb";
+			break;
+			case 'asn':
+				if (file_exists("/usr/local/share/GeoIP/GeoLite2-ASN.mmdb"))
+					return "/usr/local/share/GeoIP/GeoLite2-ASN.mmdb";
+			break;
+			case 'isp':
+				if (file_exists("/usr/local/share/GeoIP/GeoIP2-ISP.mmdb"))
+					return "/usr/local/share/GeoIP/GeoIP2-ISP.mmdb";		
+			break;		
+		}
+		return null;
 	}
 }
 
