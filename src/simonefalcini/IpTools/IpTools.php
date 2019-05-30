@@ -173,9 +173,10 @@ class IpTools {
 	    	return ['id'=>'','name'=>''];	
 	    }
 	    
-		
-	    $id = 'AS'.$record->autonomousSystemNumber;
-	    $name = $record->autonomousSystemOrganization;
+		if ($record->autonomousSystemNumber)
+	    	$id = 'AS'.$record->autonomousSystemNumber;
+	    else
+	    	$id = '';
 	    
 	    return ['id'=>$id,'name'=>$name];
 	}
