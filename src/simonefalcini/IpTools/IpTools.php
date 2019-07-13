@@ -80,10 +80,6 @@ class IpTools {
 	    	return '';
 	    }
 		$geoip = strtolower($record->country->isoCode);
-
-		if ($geoip == 'sm')
-			$geoip = 'it';
-
 		
 		return $geoip;
 	}
