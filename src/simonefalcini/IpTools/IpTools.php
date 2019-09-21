@@ -178,9 +178,16 @@ class IpTools {
 	    else {
 	    	if ($using == 'isp') {
 	    		$db = self::getDbName('asn');
-				if (!empty($db)) {					
-					$reader = new \GeoIp2\Database\Reader($db);
-					$record = $reader->asn($ip);
+				if (!empty($db)) {										
+					try {
+						$reader = new \GeoIp2\Database\Reader($db);
+						$record = $reader->asn($ip);	
+					}
+					catch(\Exception $e) {
+				    	//\Yii::error("GEOIP ASN ERROR: ip $ip not found");
+				    	return ['id'=>'','name'=>''];	
+				    }
+					
 					if ($record->autonomousSystemNumber) {
 				    	$id = 'AS'.$record->autonomousSystemNumber;
 				    	$name = $record->autonomousSystemOrganization;
