@@ -148,9 +148,11 @@ class IpTools {
 			$ip = self::getIp();
 		}
 
+		$using = 'isp';
 		try {
 			$db = self::getDbName('isp');
 			if (empty($db)) {
+				$using = 'asn';
 				$db = self::getDbName('asn');
 				if (empty($db)) {
 					Yii::error("Cannot find asn db please fix!");
