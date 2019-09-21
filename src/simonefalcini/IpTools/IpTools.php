@@ -174,11 +174,25 @@ class IpTools {
 	    	$name = $record->autonomousSystemOrganization;
 		}
 	    else {
+	    	if ($using == 'isp') {
+	    		$db = self::getDbName('asn');
+				if (!empty($db)) {					
+					$reader = new \GeoIp2\Database\Reader($db);
+					$record = $reader->asn($ip);
+					if ($record->autonomousSystemNumber) {
+				    	$id = 'AS'.$record->autonomousSystemNumber;
+				    	$name = $record->autonomousSystemOrganization;
+				    	return ['id'=>$id,'name'=>$name];
+					}
+				}				
+	    	}
+	    	
 	    	$id = '';
 	    	$name = '';
 	    }
 	    
 	    return ['id'=>$id,'name'=>$name];
+	   	   
 	}
 
 
