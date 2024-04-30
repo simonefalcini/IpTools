@@ -7,13 +7,14 @@ use \DeviceDetector\DeviceDetector;
 use \DeviceDetector\Parser\Device\DeviceParserAbstract;
 use \Detection\MobileDetect;
 
-class IpTools {
+class IpTools
+{
 
 	const ASN_BOT_LIST = [
 		'AS14230',			// INVOLTA	
 		'AS1423',			// CARSON-RTCA
 		'AS34010',			// YAHOO-IRD
-		'AS8100','AS62639',	// Quadranet
+		'AS8100', 'AS62639',	// Quadranet
 		'AS26101',			// Yahoo
 		'AS18978',			// Enzu Inc
 		'AS16276',			// OVH
@@ -30,27 +31,26 @@ class IpTools {
 		'AS62638', 			// Query Foundry, LLC
 		'AS61440',			// Digital Energy Technologies Chile SpA
 		'AS8075',			// Bing
-		'AS15169','AS19527','AS36040','AS36492','AS395973','AS43515','AS36384'			// GOOGLE
-		]; //,'AS53667','AS6921','AS62638']; // Vodafone 'AS30722'
-	
-	public static function getIp() {
-		if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-		    if (self::ip_is_private($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-		        $ip = $_SERVER['REMOTE_ADDR'];
-		    }
-		    else {
-		        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-		    }
-		}
-		else {
-		    $ip = $_SERVER['REMOTE_ADDR'];
-		}
-		if ($ip=='127.0.0.1' || $ip=='::1') {
-		    $ip = '5.168.51.191';
-		}
-		$ipblocks = explode(',',$ip);
+		'AS15169', 'AS19527', 'AS36040', 'AS36492', 'AS395973', 'AS43515', 'AS36384'			// GOOGLE
+	]; //,'AS53667','AS6921','AS62638']; // Vodafone 'AS30722'
 
-		foreach($ipblocks as $ip) {
+	public static function getIp()
+	{
+		if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+			if (self::ip_is_private($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+				$ip = $_SERVER['REMOTE_ADDR'];
+			} else {
+				$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+			}
+		} else {
+			$ip = $_SERVER['REMOTE_ADDR'];
+		}
+		if ($ip == '127.0.0.1' || $ip == '::1') {
+			$ip = '5.168.51.191';
+		}
+		$ipblocks = explode(',', $ip);
+
+		foreach ($ipblocks as $ip) {
 			$ip = trim($ip);
 			if (!self::ip_is_private($ip)) {
 				return $ip;
@@ -58,77 +58,74 @@ class IpTools {
 		}
 
 		return null;
-	}	
+	}
 
-	public static function getGeo($ip=null) {
+	public static function getGeo($ip = null)
+	{
 		if (!isset($ip)) {
 			$ip = self::getIp();
 		}
 		$db = self::getDbName('country');
-	    if (!empty($db)) {
-	    	$reader = new \GeoIp2\Database\Reader($db);
+		if (!empty($db)) {
+			$reader = new \GeoIp2\Database\Reader($db);
+		} else {
+			Yii::error("Cannot find country db please fix!");
+			return null;
 		}
-	    else {
-	    	Yii::error("Cannot find country db please fix!");
-	    	return null;
-	    }
-	    try {
-	    	$record = $reader->country($ip);
-	    }
-	    catch(\Exception $e) {
-	    	//\Yii::error("GEOIP GEO ERROR: ip $ip not found");
-	    	return '';
-	    }
-		$geoip = strtolower($record->country->isoCode);
-		
+		try {
+			$record = $reader->country($ip);
+		} catch (\Exception $e) {
+			//\Yii::error("GEOIP GEO ERROR: ip $ip not found");
+			return '';
+		}
+		$geoip = strtolower($record->country->isoCode ?? '');
+
 		return $geoip;
 	}
 
-	public static function getGeoName($ip=null) {
+	public static function getGeoName($ip = null)
+	{
 		if (!isset($ip)) {
 			$ip = self::getIp();
 		}
-	    
-	    $db = self::getDbName('country');
+
+		$db = self::getDbName('country');
 		if (!empty($db)) {
-	    	$reader = new \GeoIp2\Database\Reader($db);
+			$reader = new \GeoIp2\Database\Reader($db);
+		} else {
+			Yii::error("Cannot find country please fix!");
+			return null;
 		}
-	    else {
-	    	Yii::error("Cannot find country please fix!");
-	    	return null;
-	    }
-	    try {
-	    	$record = $reader->country($ip);
-	    }
-	    catch(\Exception $e) {
-	    	//\Yii::error("GEOIP NAME ERROR: ip $ip not found");
-	    	return '';
-	    }
-		$geoip = strtolower($record->country->name);
+		try {
+			$record = $reader->country($ip);
+		} catch (\Exception $e) {
+			//\Yii::error("GEOIP NAME ERROR: ip $ip not found");
+			return '';
+		}
+		$geoip = strtolower($record->country->name ?? '');
 
 		return $geoip;
-	}	
+	}
 
-	public static function getGeoCity($ip=null) {
+	public static function getGeoCity($ip = null)
+	{
 		if (!isset($ip)) {
 			$ip = self::getIp();
 		}
-	    
-	    $db = self::getDbName('city');
-	    if (!empty($db)) {
-	    	$reader = new \GeoIp2\Database\Reader($db);
+
+		$db = self::getDbName('city');
+		if (!empty($db)) {
+			$reader = new \GeoIp2\Database\Reader($db);
+		} else {
+			Yii::error("Cannot find city db please fix!");
+			return null;
 		}
-	    else {
-	    	Yii::error("Cannot find city db please fix!");
-	    	return null;
-	    }
-	    try {
-	    	$record = $reader->city($ip);
-	    }
-	    catch(\Exception $e) {
-	    	//\Yii::error("GEOIP CITY ERROR: ip $ip not found");
-	    	return '';
-	    }
+		try {
+			$record = $reader->city($ip);
+		} catch (\Exception $e) {
+			//\Yii::error("GEOIP CITY ERROR: ip $ip not found");
+			return '';
+		}
 
 		return [
 			'country_code' 	=> $record->country->isoCode,
@@ -141,9 +138,10 @@ class IpTools {
 			'lon'			=> $record->location->longitude,
 			'precision'		=> $record->location->accuracyRadius,
 		];
-	}	
+	}
 
-	public static function getAsn($ip=null) {
+	public static function getAsn($ip = null)
+	{
 		if (!isset($ip)) {
 			$ip = self::getIp();
 		}
@@ -156,104 +154,99 @@ class IpTools {
 				$db = self::getDbName('asn');
 				if (empty($db)) {
 					Yii::error("Cannot find asn db please fix!");
-		    		return null;
+					return null;
 				}
 				$reader = new \GeoIp2\Database\Reader($db);
 				$record = $reader->asn($ip);
-			}
-			else {
+			} else {
 				$reader = new \GeoIp2\Database\Reader($db);
 				$record = $reader->isp($ip);
-			}			
-	    }
-	    catch(\Exception $e) {
-	    	//\Yii::error("GEOIP ASN ERROR: ip $ip not found");
-	    	return ['id'=>'','name'=>''];	
-	    }
-	    
-		if ($record->autonomousSystemNumber) {
-	    	$id = 'AS'.$record->autonomousSystemNumber;
-	    	$name = $record->autonomousSystemOrganization;
+			}
+		} catch (\Exception $e) {
+			//\Yii::error("GEOIP ASN ERROR: ip $ip not found");
+			return ['id' => '', 'name' => ''];
 		}
-	    else {
-	    	if ($using == 'isp') {
-	    		$db = self::getDbName('asn');
-				if (!empty($db)) {					
+
+		if ($record->autonomousSystemNumber) {
+			$id = 'AS' . $record->autonomousSystemNumber;
+			$name = $record->autonomousSystemOrganization;
+		} else {
+			if ($using == 'isp') {
+				$db = self::getDbName('asn');
+				if (!empty($db)) {
 					$reader = new \GeoIp2\Database\Reader($db);
 					$record = $reader->asn($ip);
 					if ($record->autonomousSystemNumber) {
-				    	$id = 'AS'.$record->autonomousSystemNumber;
-				    	$name = $record->autonomousSystemOrganization;
-				    	return ['id'=>$id,'name'=>$name];
+						$id = 'AS' . $record->autonomousSystemNumber;
+						$name = $record->autonomousSystemOrganization;
+						return ['id' => $id, 'name' => $name];
 					}
-				}				
-	    	}
-	    	
-	    	$id = '';
-	    	$name = '';
-	    }
-	    
-	    return ['id'=>$id,'name'=>$name];
-	   	   
+				}
+			}
+
+			$id = '';
+			$name = '';
+		}
+
+		return ['id' => $id, 'name' => $name];
 	}
 
 
-	public static function isBot($ip=null) {		
-		$asn = self::getAsn($ip);	    	   
+	public static function isBot($ip = null)
+	{
+		$asn = self::getAsn($ip);
 		return in_array($asn['id'], self::ASN_BOT_LIST);
 	}
 
-	private static function ip_is_private ($ip) {
-	    $pri_addrs = array (
-	                      '10.0.0.0|10.255.255.255', // single class A network
-	                      '172.16.0.0|172.31.255.255', // 16 contiguous class B network
-	                      '192.168.0.0|192.168.255.255', // 256 contiguous class C network
-	                      '169.254.0.0|169.254.255.255', // Link-local address also refered to as Automatic Private IP Addressing
-	                      '127.0.0.0|127.255.255.255' // localhost
-	                     );
+	private static function ip_is_private($ip)
+	{
+		$pri_addrs = array(
+			'10.0.0.0|10.255.255.255', // single class A network
+			'172.16.0.0|172.31.255.255', // 16 contiguous class B network
+			'192.168.0.0|192.168.255.255', // 256 contiguous class C network
+			'169.254.0.0|169.254.255.255', // Link-local address also refered to as Automatic Private IP Addressing
+			'127.0.0.0|127.255.255.255' // localhost
+		);
 
-	    $long_ip = ip2long ($ip);
-	    if ($long_ip != -1) {
+		$long_ip = ip2long($ip);
+		if ($long_ip != -1) {
 
-	        foreach ($pri_addrs AS $pri_addr) {
-	            list ($start, $end) = explode('|', $pri_addr);
+			foreach ($pri_addrs as $pri_addr) {
+				list($start, $end) = explode('|', $pri_addr);
 
-	             // IF IS PRIVATE
-	             if ($long_ip >= ip2long ($start) && $long_ip <= ip2long ($end)) {
-	                 return true;
-	             }
-	        }
-	    }
+				// IF IS PRIVATE
+				if ($long_ip >= ip2long($start) && $long_ip <= ip2long($end)) {
+					return true;
+				}
+			}
+		}
 
-	    return false;
+		return false;
 	}
 
-	public static function getDevice($ua=null) {
+	public static function getDevice($ua = null)
+	{
 		if (!isset($ua)) {
-			$ua = isset($_SERVER['HTTP_USER_AGENT'])?$_SERVER['HTTP_USER_AGENT']:'';
+			$ua = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
 		}
-		$mobiledetect = new MobileDetect(null,$ua);
-        $device = '';
-        $bot = false;
-        if ($mobiledetect->isiphone()) {
-            $device = 'iphone';
-            $os = 'ios';
-        }
-        elseif ($mobiledetect->isipad()) {
-            $device = 'ipad';
-            $os = 'ios';
-        }
-        elseif ($mobiledetect->isipod()) {
-            $device = 'ipod';
-            $os = 'ios';
-        }
-        elseif ($mobiledetect->isAndroidOS()) {
-            $device = 'android';    
-            $os = 'android';
-        }
-        else {
-            
-        	$dd = new DeviceDetector($ua);
+		$mobiledetect = new MobileDetect(null, $ua);
+		$device = '';
+		$bot = false;
+		if ($mobiledetect->isiphone()) {
+			$device = 'iphone';
+			$os = 'ios';
+		} elseif ($mobiledetect->isipad()) {
+			$device = 'ipad';
+			$os = 'ios';
+		} elseif ($mobiledetect->isipod()) {
+			$device = 'ipod';
+			$os = 'ios';
+		} elseif ($mobiledetect->isAndroidOS()) {
+			$device = 'android';
+			$os = 'android';
+		} else {
+
+			$dd = new DeviceDetector($ua);
 
 
 			// OPTIONAL: Set caching method
@@ -270,75 +263,78 @@ class IpTools {
 			$dd->parse();
 
 			if ($dd->isBot()) {
-			  // handle bots,spiders,crawlers,...
-			  $bot = $dd->getBot();
+				// handle bots,spiders,crawlers,...
+				$bot = $dd->getBot();
 			} else {
-			  $clientInfo = $dd->getClient(); // holds information about browser, feed reader, media player, ...			  
-			  $os = $dd->getOs();
-			  $os = isset($os['name'])?$os['name']:'';
-			  $device = isset($clientInfo['name'])?$clientInfo['name']:'';			  
+				$clientInfo = $dd->getClient(); // holds information about browser, feed reader, media player, ...			  
+				$os = $dd->getOs();
+				$os = isset($os['name']) ? $os['name'] : '';
+				$device = isset($clientInfo['name']) ? $clientInfo['name'] : '';
 			}
+		}
 
-        }
-
-        return ['device' => $device, 'os' => $os, 'bot' => $bot, 'ismobile' => $mobiledetect->isMobile()];
+		return ['device' => $device, 'os' => $os, 'bot' => $bot, 'ismobile' => $mobiledetect->isMobile()];
 	}
 
-	public static function createDateRangeArray($strDateFrom,$strDateTo) {
-	    // takes two dates formatted as YYYY-MM-DD and creates an
-	    // inclusive array of the dates between the from and to dates.
+	public static function createDateRangeArray($strDateFrom, $strDateTo)
+	{
+		// takes two dates formatted as YYYY-MM-DD and creates an
+		// inclusive array of the dates between the from and to dates.
 
-	    // could test validity of dates here but I'm already doing
-	    // that in the main script
+		// could test validity of dates here but I'm already doing
+		// that in the main script
 
-	    $aryRange=array();
+		$aryRange = array();
 
-	    $iDateFrom=mktime(1,0,0,
-	    	(int)substr($strDateFrom,5,2),     
-	    	(int)substr($strDateFrom,8,2),
-	    	(int)substr($strDateFrom,0,4)
-	    	);
-	    $iDateTo=mktime(1,0,0,
-	    	(int)substr($strDateTo,5,2),     
-	    	(int)substr($strDateTo,8,2),
-	    	(int)substr($strDateTo,0,4)
-	    	);
+		$iDateFrom = mktime(
+			1,
+			0,
+			0,
+			(int)substr($strDateFrom, 5, 2),
+			(int)substr($strDateFrom, 8, 2),
+			(int)substr($strDateFrom, 0, 4)
+		);
+		$iDateTo = mktime(
+			1,
+			0,
+			0,
+			(int)substr($strDateTo, 5, 2),
+			(int)substr($strDateTo, 8, 2),
+			(int)substr($strDateTo, 0, 4)
+		);
 
-	    if ($iDateTo>=$iDateFrom)
-	    {
-	        array_push($aryRange,date('Y-m-d',$iDateFrom)); // first entry
-	        while ($iDateFrom<$iDateTo)
-	        {
-	            $iDateFrom+=86400; // add 24 hours
-	            array_push($aryRange,date('Y-m-d',$iDateFrom));
-	        }
-	    }
-	    return $aryRange;
+		if ($iDateTo >= $iDateFrom) {
+			array_push($aryRange, date('Y-m-d', $iDateFrom)); // first entry
+			while ($iDateFrom < $iDateTo) {
+				$iDateFrom += 86400; // add 24 hours
+				array_push($aryRange, date('Y-m-d', $iDateFrom));
+			}
+		}
+		return $aryRange;
 	}
 
-	private static function getDbName($db) {
-		switch(strtolower($db)) {
+	private static function getDbName($db)
+	{
+		switch (strtolower($db ?? '')) {
 			case 'country':
 				if (file_exists("/usr/local/share/GeoIP/GeoIP2-Country.mmdb"))
 					return "/usr/local/share/GeoIP/GeoIP2-Country.mmdb";
 				elseif (file_exists("/usr/local/share/GeoIP/GeoLite2-Country.mmdb"))
-					return "/usr/local/share/GeoIP/GeoLite2-Country.mmdb";	
-			break;			
+					return "/usr/local/share/GeoIP/GeoLite2-Country.mmdb";
+				break;
 			case 'city':
 				if (file_exists("/usr/local/share/GeoIP/GeoLite2-City.mmdb"))
 					return "/usr/local/share/GeoIP/GeoLite2-City.mmdb";
-			break;
+				break;
 			case 'asn':
 				if (file_exists("/usr/local/share/GeoIP/GeoLite2-ASN.mmdb"))
 					return "/usr/local/share/GeoIP/GeoLite2-ASN.mmdb";
-			break;
+				break;
 			case 'isp':
 				if (file_exists("/usr/local/share/GeoIP/GeoIP2-ISP.mmdb"))
-					return "/usr/local/share/GeoIP/GeoIP2-ISP.mmdb";		
-			break;		
+					return "/usr/local/share/GeoIP/GeoIP2-ISP.mmdb";
+				break;
 		}
 		return null;
 	}
 }
-
-?>

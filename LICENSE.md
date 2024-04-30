@@ -1,6 +1,6 @@
-Version 1.0, March 2000
-Copyright (C) 2000 Banlu Kemiyatorn (]d).
-136 Nives 7 Jangwattana 14 Laksi Bangkok
+Version 1.0, March 2024
+Copyright (C) 2024 Simone Falcini
+
 Everyone is permitted to copy and distribute verbatim copies
 of this license document, but changing it is not allowed.
 
