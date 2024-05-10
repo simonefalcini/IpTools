@@ -65,6 +65,10 @@ class IpTools
 		if (!isset($ip)) {
 			$ip = self::getIp();
 		}
+		if (empty($ip)) {
+			return null;
+		}
+
 		$db = self::getDbName('country');
 		if (!empty($db)) {
 			$reader = new \GeoIp2\Database\Reader($db);
@@ -87,6 +91,9 @@ class IpTools
 	{
 		if (!isset($ip)) {
 			$ip = self::getIp();
+		}
+		if (empty($ip)) {
+			return null;
 		}
 
 		$db = self::getDbName('country');
@@ -111,6 +118,9 @@ class IpTools
 	{
 		if (!isset($ip)) {
 			$ip = self::getIp();
+		}
+		if (empty($ip)) {
+			return null;
 		}
 
 		$db = self::getDbName('city');
@@ -144,6 +154,9 @@ class IpTools
 	{
 		if (!isset($ip)) {
 			$ip = self::getIp();
+		}
+		if (empty($ip)) {
+			return null;
 		}
 
 		$using = 'isp';
