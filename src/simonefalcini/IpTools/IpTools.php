@@ -14,7 +14,8 @@ class IpTools
 		'AS14230',			// INVOLTA	
 		'AS1423',			// CARSON-RTCA
 		'AS34010',			// YAHOO-IRD
-		'AS8100', 'AS62639',	// Quadranet
+		'AS8100',
+		'AS62639',	// Quadranet
 		'AS26101',			// Yahoo
 		'AS18978',			// Enzu Inc
 		'AS16276',			// OVH
@@ -31,7 +32,13 @@ class IpTools
 		'AS62638', 			// Query Foundry, LLC
 		'AS61440',			// Digital Energy Technologies Chile SpA
 		'AS8075',			// Bing
-		'AS15169', 'AS19527', 'AS36040', 'AS36492', 'AS395973', 'AS43515', 'AS36384'			// GOOGLE
+		'AS15169',
+		'AS19527',
+		'AS36040',
+		'AS36492',
+		'AS395973',
+		'AS43515',
+		'AS36384'			// GOOGLE
 	]; //,'AS53667','AS6921','AS62638']; // Vodafone 'AS30722'
 
 	public static function getIp()
@@ -188,11 +195,16 @@ class IpTools
 				$db = self::getDbName('asn');
 				if (!empty($db)) {
 					$reader = new \GeoIp2\Database\Reader($db);
-					$record = $reader->asn($ip);
-					if ($record->autonomousSystemNumber) {
-						$id = 'AS' . $record->autonomousSystemNumber;
-						$name = $record->autonomousSystemOrganization;
-						return ['id' => $id, 'name' => $name];
+					try {
+						$record = $reader->asn($ip);
+						if ($record->autonomousSystemNumber) {
+							$id = 'AS' . $record->autonomousSystemNumber;
+							$name = $record->autonomousSystemOrganization;
+							return ['id' => $id, 'name' => $name];
+						}
+					} catch (\Exception $e) {
+						//\Yii::error("GEOIP ASN ERROR: ip $ip not found");
+						return ['id' => '', 'name' => ''];
 					}
 				}
 			}
